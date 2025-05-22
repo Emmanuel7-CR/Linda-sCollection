@@ -32,56 +32,37 @@ window.addEventListener('resize', () => {
 
 
 
-
-
-
-
-
  // SLIDE SCRIPT CODEx
+
 document.addEventListener('DOMContentLoaded', () => {
-  let slideIndex = 0; // Start with 0 index for easier looping
-  const slides = document.getElementsByClassName("mySlides");
-  const dots = document.getElementsByClassName("dot");
-  
-  // Initialize first slide and dot
+  let slideIndex = 0;
+  const slides = document.querySelectorAll('.mySlides');
+  const dots   = document.querySelectorAll('.dot');
+
+  function showSlides() {
+    slides.forEach(s => s.classList.remove('active'));
+    dots.forEach(d   => d.classList.remove('active'));
+
+    slideIndex = (slideIndex + 1) % slides.length;
+    slides[slideIndex].classList.add('active');
+    dots[slideIndex].classList.add('active');
+
+    // schedule next
+    setTimeout(showSlides, 5000);
+  }
+
+  // kick things off
   slides[0].classList.add('active');
   dots[0].classList.add('active');
+  setTimeout(showSlides, 5000);
 
-  // Arrow click handlers
-  document.querySelector('.prev').addEventListener('click', () => plusSlides(-1));
-  document.querySelector('.next').addEventListener('click', () => plusSlides(1));
-
-  // Dot click handlers
-  Array.from(dots).forEach((dot, index) => {
-      dot.addEventListener('click', () => currentSlide(index));
-  });
-
-  function plusSlides(n) {
-      showSlides(slideIndex += n);
-  }
-
-  function currentSlide(n) {
-      showSlides(slideIndex = n);
-  }
-
-  function showSlides(n) {
-      // Handle loop boundaries
-      if (n >= slides.length) slideIndex = 0;
-      if (n < 0) slideIndex = slides.length - 1;
-      
-      // Remove active classes
-      Array.from(slides).forEach(slide => slide.classList.remove('active'));
-      Array.from(dots).forEach(dot => dot.classList.remove('active'));
-      
-      // Add active classes
-      slides[slideIndex].classList.add('active');
-      dots[slideIndex].classList.add('active');
-  }
-
-  // Auto-advance every 5 seconds
-  setInterval(() => plusSlides(1), 5000);
-});  
-
+  // manual nav (prev/next)
+  document.querySelector('.prev').onclick = () => {
+    slideIndex = (slideIndex - 1 + slides.length) % slides.length - 1;
+    showSlides();
+  };
+  document.querySelector('.next').onclick = () => showSlides();
+});
 
 
 // Product visibility control
@@ -155,14 +136,18 @@ viewMoreBtn.addEventListener('click', handleViewMore);
 
   //VALUE PROPOSITION SCRIPT CODE
 // Animate on scroll
+// Scroll Animation for All Sections
 document.addEventListener('DOMContentLoaded', function() {
-  const valueCards = document.querySelectorAll('.value-card');
-  
-  const observerOptions = {
+  // Configure animation properties
+  const animationSettings = {
     threshold: 0.2,
-    rootMargin: '0px'
+    rootMargin: '0px',
+    translateDistance: '20px',
+    transitionDuration: '0.6s',
+    timingFunction: 'cubic-bezier(0.16, 1, 0.3, 1)'
   };
 
+  // Create observer
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
@@ -170,17 +155,21 @@ document.addEventListener('DOMContentLoaded', function() {
         entry.target.style.transform = 'translateY(0)';
       }
     });
-  }, observerOptions);
-
-  valueCards.forEach(card => {
-    card.style.opacity = '0';
-    card.style.transform = 'translateY(20px)';
-    card.style.transition = 'all 0.6s cubic-bezier(0.16, 1, 0.3, 1)';
-    observer.observe(card);
+  }, {
+    threshold: animationSettings.threshold,
+    rootMargin: animationSettings.rootMargin
   });
 
-  // Hover effect enhancement
-  valueCards.forEach(card => {
+  // Animate all scroll-triggered elements
+  document.querySelectorAll('.scroll-animate').forEach(element => {
+    element.style.opacity = '0';
+    element.style.transform = `translateY(${animationSettings.translateDistance})`;
+    element.style.transition = `all ${animationSettings.transitionDuration} ${animationSettings.timingFunction}`;
+    observer.observe(element);
+  });
+
+  // Add hover effects to value cards only
+  document.querySelectorAll('.value-card').forEach(card => {
     card.addEventListener('mouseenter', function() {
       this.querySelector('.value-icon').style.transform = 'rotate(10deg) scale(1.1)';
     });
@@ -192,48 +181,6 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 //FOOTER SCRIPT CODE
-/*
-function updateContactStatus() {
-  // Update local time display (hours:minutes)
-  const updateTime = () => {
-    const now = new Date();
-    const hours = String(now.getHours()).padStart(2, '0');
-    const minutes = String(now.getMinutes()).padStart(2, '0');
-    document.getElementById('current-time').textContent = `${hours}:${minutes}`;
-  };
-
-  // Check local business hours availability
-  const checkAvailability = () => {
-    const now = new Date();
-    const currentHour = now.getHours();
-    const currentDay = now.getDay(); // 0 = Sunday
-    
-    // Availability: Mon-Sat 9AM-8PM LOCAL TIME
-    const isAvailable = currentDay !== 0 && // Not Sunday
-                       currentHour >= 9 && 
-                       currentHour < 20;
-
-    const statusDot = document.querySelector('.status-dot');
-    const statusText = document.querySelector('.status-text');
-    
-    statusDot.style.background = isAvailable ? '#2ecc71' : '#e74c3c';
-    statusDot.style.boxShadow = isAvailable 
-      ? '0 0 8px rgba(46, 204, 113, 0.3)' 
-      : '0 0 8px rgba(231, 76, 60, 0.3)';
-      
-    statusText.textContent = isAvailable 
-      ? 'Support Team Available' 
-      : 'Support Team Offline';
-  };
-
-  updateTime();
-  checkAvailability();
-}
-
-// Update every minute (60,000ms)
-setInterval(updateContactStatus, 60000);
-updateContactStatus(); // Initial call
-*/
 
 function updateContactStatus() {
   // Update local time display (e.g. "2:30PM")
