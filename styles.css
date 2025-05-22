@@ -1,5 +1,5 @@
 
- :root{
+:root{
   --accent: #f9f9f9;
   --primary: #000;
   --secondary: #2E4053;
@@ -98,11 +98,13 @@
   opacity: 0;
   transition: opacity 1.5s ease-in-out;
   z-index: 1;
+  pointer-events: none;
 }
 
 .mySlides.active {
   opacity: 1;
-  z-index: 1;
+  z-index: 2;
+  pointer-events: auto;
 }
 
  .slideshow-img{
@@ -110,8 +112,16 @@
   height: 100%;
   object-fit: cover;
   object-position: center center;
-  animation: fade 0.5s ease-in;
  }
+ .mySlides.active .text,
+.mySlides.active .buy-btn {
+  animation: slide-fade 1s ease-in;
+}
+
+@keyframes slide-fade {
+  from { opacity: 0.3; }
+  to   { opacity: 1; }
+}
  
  /* Next & previous buttons */
  .prev, .next {
@@ -246,43 +256,7 @@
  background-color: #717171;
  }
  
- /* Fading animation */
- .fade {
- animation-name: fade;
- animation-duration: 1.5s;
- }
-
-@keyframes circle {
-  0%{
-  width: 0;
-  height: 0;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background-color: var(--secondary);
-  }
-  50%{
-  width: 200%;
-  height: 200%;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  }
-  100%{
-  width: 0;
-  height: 0;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background-color: var(--accent);
-  }
- }
  
- @keyframes fade {
- from {opacity: 0.3}
- to {opacity: 1}
- }
-
  /* PRODUCT SECTION */
   /* Products Section */
 #product-sec {
@@ -804,4 +778,24 @@ html {
         display: block;
         text-align: center;
     }
+}
+/* ANIMATE VARIOUS SECTIONS ON SCROLL*/
+/* Scroll Animation Base Styles */
+.scroll-animate {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Different animation directions */
+[data-animation="fade-left"] {
+  transform: translateX(-50px);
+}
+[data-animation="fade-right"] {
+  transform: translateX(50px);
+}
+
+/* Staggered animations */
+[data-stagger] {
+  transition-delay: calc(var(--stagger-order) * 0.1s);
 }
