@@ -1,26 +1,19 @@
-// Mobile Menu Toggle
+// Mobile Menu
 const navToggle = document.querySelector('.nav-toggle');
 const navMenu = document.querySelector('nav ul');
 
 navToggle.addEventListener('click', () => {
-    navToggle.classList.toggle('active');
-    navMenu.classList.toggle('active');
-    
-    // Close menu when clicking outside
-    if (navToggle.classList.contains('active')) {
-        document.addEventListener('click', closeMenuOnClickOutside);
-    } else {
-        document.removeEventListener('click', closeMenuOnClickOutside);
-    }
+  navToggle.classList.toggle('active');
+  navMenu.classList.toggle('active');
 });
 
-function closeMenuOnClickOutside(e) {
-    if (!e.target.closest('nav') && !e.target.closest('.nav-toggle')) {
-        navToggle.classList.remove('active');
-        navMenu.classList.remove('active');
-        document.removeEventListener('click', closeMenuOnClickOutside);
-    }
-}
+// Close menu on click outside
+document.addEventListener('click', (e) => {
+  if (!navMenu.contains(e.target) && !navToggle.contains(e.target)) {
+    navMenu.classList.remove('active');
+    navToggle.classList.remove('active');
+  }
+});
 
 // Close menu on window resize
 window.addEventListener('resize', () => {
@@ -32,38 +25,43 @@ window.addEventListener('resize', () => {
 
 
 
- // SLIDE SCRIPT CODEx
+ // Slideshow
+let currentSlide = 0;
+const slides = document.querySelectorAll('.mySlides');
+const dots = document.querySelectorAll('.dot');
+const slideInterval = 5000;
 
-document.addEventListener('DOMContentLoaded', () => {
-  let slideIndex = 0;
-  const slides = document.querySelectorAll('.mySlides');
-  const dots   = document.querySelectorAll('.dot');
+function showSlide(index) {
+  slides.forEach(slide => slide.classList.remove('active'));
+  dots.forEach(dot => dot.classList.remove('active'));
+  
+  currentSlide = (index + slides.length) % slides.length;
+  slides[currentSlide].classList.add('active');
+  dots[currentSlide].classList.add('active');
+}
 
-  function showSlides() {
-    slides.forEach(s => s.classList.remove('active'));
-    dots.forEach(d   => d.classList.remove('active'));
+function nextSlide() {
+  showSlide(currentSlide + 1);
+}
 
-    slideIndex = (slideIndex + 1) % slides.length;
-    slides[slideIndex].classList.add('active');
-    dots[slideIndex].classList.add('active');
+// Initialize first slide
+showSlide(0);
 
-    // schedule next
-    setTimeout(showSlides, 5000);
-  }
+// Auto-advance
+let intervalId = setInterval(nextSlide, slideInterval);
 
-  // kick things off
-  slides[0].classList.add('active');
-  dots[0].classList.add('active');
-  setTimeout(showSlides, 5000);
-
-  // manual nav (prev/next)
-  document.querySelector('.prev').onclick = () => {
-    slideIndex = (slideIndex - 1 + slides.length) % slides.length - 1;
-    showSlides();
-  };
-  document.querySelector('.next').onclick = () => showSlides();
+// Manual controls
+document.querySelector('.prev').addEventListener('click', () => {
+  clearInterval(intervalId);
+  showSlide(currentSlide - 1);
+  intervalId = setInterval(nextSlide, slideInterval);
 });
 
+document.querySelector('.next').addEventListener('click', () => {
+  clearInterval(intervalId);
+  nextSlide();
+  intervalId = setInterval(nextSlide, slideInterval);
+});
 
 // Product visibility control
 let visibleProducts = 8; // Start with 8 visible products
@@ -110,75 +108,91 @@ function handleViewMore() {
 document.addEventListener('DOMContentLoaded', initializeProducts);
 viewMoreBtn.addEventListener('click', handleViewMore);
 
-//Lightbox Image
- // grab all thumbnails, and the single overlay + its <img>
-  const thumbs    = document.querySelectorAll('.productImg');
-  const overlay   = document.querySelector('.lightbox-overlay');
-  const overlayImg = overlay.querySelector('img');
+(() => {
+  const lightbox = document.getElementById('gallery-lightbox');
+  const slider   = document.getElementById('gb-slider');
+  const closeBtn = document.getElementById('gb-close');
+  const prevBtn  = document.getElementById('gb-prev');
+  const nextBtn  = document.getElementById('gb-next');
+  const thumbs   = Array.from(document.querySelectorAll('.productImg'));
+  let currentIdx = 0;
 
-  thumbs.forEach(thumb => {
-    thumb.addEventListener('click', () => {
-      // set the overlay <img> to match whichever thumbnail was clicked
-      overlayImg.src =  thumb.src;
-      overlayImg.alt = thumb.alt || 'Product image';
-      // show it
-      overlay.style.display = 'flex';
-    });
+  // Build slides dynamically
+  thumbs.forEach((img, i) => {
+    const slide = document.createElement('div');
+    slide.className = 'gallery-slide';
+    const clone = img.cloneNode();
+    clone.alt = img.alt || 'Product image';
+    slide.appendChild(clone);
+    slider.append(slide);
+
+    // click thumb → open at that index
+    img.addEventListener('click', () => openGallery(i));
   });
 
-  // clicking outside the enlarged image closes the overlay
-  overlay.addEventListener('click', e => {
-    if (e.target !== overlayImg) {
-      overlay.style.display = 'none';
-      overlayImg.src = '';
+ function openGallery(idx) {
+  currentIdx = idx;
+  slider.style.transform = `translateX(-${100 * idx}%)`;
+  lightbox.setAttribute('aria-hidden', 'false');
+  document.body.classList.add('lightbox-open');
+  history.pushState({gallery: true}, '');
+  closeBtn.focus();
+}
+
+  function closeGallery() {
+  lightbox.setAttribute('aria-hidden', 'true');
+  document.body.classList.remove('lightbox-open');
+  history.state && history.back();
+}
+
+  function showSlide(idx) {
+    currentIdx = (idx + thumbs.length) % thumbs.length;
+    slider.style.transform = `translateX(-${100 * currentIdx}%)`;
+  }
+
+  // Button handlers
+  closeBtn.addEventListener('click', closeGallery);
+  prevBtn.addEventListener('click', () => showSlide(currentIdx - 1));
+  nextBtn.addEventListener('click', () => showSlide(currentIdx + 1));
+
+  // ESC key
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && lightbox.getAttribute('aria-hidden') === 'false') {
+      closeGallery();
+    }
+    if (e.key === 'ArrowLeft')  showSlide(currentIdx - 1);
+    if (e.key === 'ArrowRight') showSlide(currentIdx + 1);
+  });
+
+  // Swipe support
+  let startX = 0;
+  slider.addEventListener('touchstart', e => startX = e.changedTouches[0].clientX);
+  slider.addEventListener('touchend', e => {
+    const delta = e.changedTouches[0].clientX - startX;
+    if (delta > 50) showSlide(currentIdx - 1);
+    else if (delta < -50) showSlide(currentIdx + 1);
+  });
+
+  // Handle browser back button
+  window.addEventListener('popstate', e => {
+    if (lightbox.getAttribute('aria-hidden') === 'false' && (!e.state || !e.state.gallery)) {
+      closeGallery();
     }
   });
+})();
 
   //VALUE PROPOSITION SCRIPT CODE
-// Animate on scroll
-// Scroll Animation for All Sections
-document.addEventListener('DOMContentLoaded', function() {
-  // Configure animation properties
-  const animationSettings = {
-    threshold: 0.2,
-    rootMargin: '0px',
-    translateDistance: '20px',
-    transitionDuration: '0.6s',
-    timingFunction: 'cubic-bezier(0.16, 1, 0.3, 1)'
-  };
-
-  // Create observer
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        entry.target.style.opacity = '1';
-        entry.target.style.transform = 'translateY(0)';
-      }
-    });
-  }, {
-    threshold: animationSettings.threshold,
-    rootMargin: animationSettings.rootMargin
+// Scroll Animations
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.style.opacity = '1';
+      entry.target.style.transform = 'translateY(0)';
+    }
   });
+}, { threshold: 0.2 });
 
-  // Animate all scroll-triggered elements
-  document.querySelectorAll('.scroll-animate').forEach(element => {
-    element.style.opacity = '0';
-    element.style.transform = `translateY(${animationSettings.translateDistance})`;
-    element.style.transition = `all ${animationSettings.transitionDuration} ${animationSettings.timingFunction}`;
-    observer.observe(element);
-  });
-
-  // Add hover effects to value cards only
-  document.querySelectorAll('.value-card').forEach(card => {
-    card.addEventListener('mouseenter', function() {
-      this.querySelector('.value-icon').style.transform = 'rotate(10deg) scale(1.1)';
-    });
-    
-    card.addEventListener('mouseleave', function() {
-      this.querySelector('.value-icon').style.transform = 'none';
-    });
-  });
-});
+document.querySelectorAll('.scroll-animate').forEach(el => observer.observe(el));
 
 //FOOTER SCRIPT CODE
 
