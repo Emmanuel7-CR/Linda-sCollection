@@ -28,7 +28,7 @@
   <div class="slideshow-container">
 
     <div class="mySlides">
-      <img src="WhatsApp Image 2025-05-04 at 12.10.25_c1cade61.jpg"
+      <img src="slideImages/WhatsApp Image 2025-05-04 at 12.10.25_c1cade61.jpg"
            class="slideshow-img" alt="Slide 1">
       <div class="text-container">
         <div class="text">Linda's Collection</div>
@@ -39,7 +39,7 @@
     </div>
 
     <div class="mySlides fade">
-      <img src="IMG-20250507-WA0041.jpg"
+      <img src="slideImages/IMG-20250507-WA0041.jpg"
            class="slideshow-img" alt="Slide 2">
       <div class="text-container">
         <div class="text">Linda's Collection</div>
@@ -50,7 +50,7 @@
     </div>
 
     <div class="mySlides fade">
-      <img src="IMG-20250507-WA0042.jpg"
+      <img src="slideImages/IMG-20250507-WA0042.jpg"
            class="slideshow-img" alt="Slide 3">
       <div class="text-container">
         <div class="text">Linda's Collection</div>
@@ -75,7 +75,7 @@
 
   
     
-   <section id="product-sec" class="scroll-animate" data-animation="fade-up" data-stagger="0.1">
+   <section id="product-sec" class="scroll-animate" data-animation="fade-left" data-stagger="0.1">
         <h2 class="section-title">Products</h2>
         
         <div class="product-container">
@@ -170,13 +170,7 @@
                 <img src="productImages/Product 15.jpg" loading="lazy" loading="lazy" alt="Watch & Bracelet" class="productImg">
                  <caption><a class="Inquire" href="https://wa.link/jyf6hw">Inquire</a></caption>
                </div>
-                <!-- The overlay -->
-  <div  class="lightbox-overlay lightbox">
-    <img src="productImages/Product 1.jpg" alt="Enlarged product">
-  </div>
-  
-
-               
+                
             </div>
             <!-- End of product card -->
         
@@ -185,7 +179,7 @@
     </section>
 
    <!-- HTML Structure -->
-<section id="value-proposition" class="scroll-animate"  data-animation="fade-up">
+<section id="value-proposition" class="scroll-animate">
   <h2 class="section-title">Why Shop With Us</h2>
   <div class="value-grid">
     <div class="value-card">
@@ -207,7 +201,7 @@
 </section>
 
 <!-- Updated HTML -->
-<section class="contact-section" id="contact"  data-animation="fade-up">
+<section class="contact-section" id="contact">
   <div class="contact-container">
     <h2 class="section-title">Contact Support</h2>
     
@@ -244,7 +238,16 @@
     </div>
   </div>
 </section>
-    <script src="script.js"></script>
+   
+   <div id="gallery-lightbox" aria-hidden="true" role="dialog" aria-label="Product image gallery">
+  <button id="gb-close" aria-label="Close gallery">×</button>
+  <div id="gb-slider">
+    <!-- Slides will be injected here by JS -->
+  </div>
+  <button class="gallery-btn prev" id="gb-prev" aria-label="Previous image">‹</button>
+  <button class="gallery-btn next" id="gb-next" aria-label="Next image">›</button>
+</div>
+
+ <script src="script.js"></script>
 </body>
 </html>
-
