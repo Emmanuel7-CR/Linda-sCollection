@@ -413,6 +413,39 @@ body.lightbox-open {
   right: 1rem;
 }
 
+/* VALUE CARDS/ICON */
+.delivery-icon:hover{
+  animation: move 2s linear;
+}
+@keyframes move{
+  form{
+    transform: translateX(150px);
+  }
+  to{
+    transform: translateX(-150px);
+  }
+}
+.apparel-icon:hover{
+  scale: 1.5;
+  transition: all 1.5s;
+}
+.tape-icon:hover{
+  transform: rotate(360deg);
+  transition: all 1.5s;
+}
+
+.ring-icon:hover{
+  animation: shake 0.5s infinite;
+}
+@keyframes shake {
+  0% { transform: translate(1px, 1px) rotate(0deg); }
+  10% { transform: translate(-1px, -2px) rotate(-1deg); }
+  20% { transform: translate(-3px, 0px) rotate(1deg); }
+  30% { transform: translate(3px, 2px) rotate(0deg); }
+  /* Add more keyframes for a more complex shaking pattern */
+}
+
+
 @media (max-width: 768px) {
   .gallery-btn {
     padding: 0.75rem;
